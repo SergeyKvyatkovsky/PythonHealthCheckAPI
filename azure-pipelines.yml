@@ -53,8 +53,8 @@ parameters:
   
 
 variables:
-#  - name: IS_DEV_BRANCH
-#    value: $[in(variables['Build.SourceBranch'], '${{parameters.dev_branch}}'), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq('${{parameters.dev_branch}}', 'release-')), and(eq(variables['Build.Reason'], 'PullRequest'),eq('${{parameters.dev_branch}}', 'PR-')))]
+  - name: IS_DEV_BRANCH
+    value: $[in(variables['Build.SourceBranch'], '${{parameters.dev_branch}}'), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq('${{parameters.dev_branch}}', 'release-')), and(eq(variables['Build.Reason'], 'PullRequest'),eq('${{parameters.dev_branch}}', 'PR-')))]
   - name: IS_TEST_BRANCH
     value: $[or(in(variables['Build.SourceBranch'], '${{parameters.test_branch}}'),and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq('${{parameters.test_branch}}', 'release-')))]
   - name: IS_STAGE_BRANCH
