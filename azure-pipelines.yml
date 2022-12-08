@@ -116,8 +116,6 @@ stages:
     displayName: Install & Validate
     jobs:
 #      - template: ../libs/stages/init.yml
-        parameters:
-          language: Java
       - job:
         steps:
         - bash: echo ${IS_DEV_BRANCH}
