@@ -86,7 +86,7 @@ stages:
     jobs:
       - job: 
         steps:
-          - ${{ if eq(variables.IS_DEV_BRANCH, 'msbuild')}}:
+          - ${{ if eq(variables.IS_DEV_BRANCH, 'true')}}:
 #          - task: msbuild@1
 #          - task: vstest@2
           - bash: echo 2112121212
