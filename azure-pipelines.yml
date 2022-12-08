@@ -75,6 +75,7 @@ stages:
         steps:
         - bash: echo "start"
           condition: eq(variables.IS_DEV_BRANCH, 'true')
+        - bash: echo "condition works"
 #        - ${{ if eq('${variables.IS_DEV_BRANCH}', 'true') }}:
 #        - bash: echo "this is adaptum"
 #        - ${{ elseif eq(variables['IS_DEV_BRANCH'], 'dev') }}:
