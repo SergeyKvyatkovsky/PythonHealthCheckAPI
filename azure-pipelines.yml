@@ -86,7 +86,7 @@ stages:
     jobs:
       - job: 
         steps:
-          - ${{ if eq(variables['IS_DEV_BRANCH'], 'true')}}:
+          - ${{ if eq(variables.IS_DEV_BRANCH, 'true')}}:
           - bash: echo 2112121212
           - script: 
             env:
