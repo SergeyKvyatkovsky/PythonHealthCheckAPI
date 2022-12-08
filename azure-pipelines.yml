@@ -115,7 +115,7 @@ stages:
   - stage: installValidate
     displayName: Install & Validate
     jobs:
-      - template: ../libs/stages/init.yml
+#      - template: ../libs/stages/init.yml
         parameters:
           language: Java
       - job:
@@ -128,7 +128,7 @@ stages:
      # and(succeeded(), or(eq(variables['DEFAULT_OR_DEVOPS_BRANCH'], 'true'), eq(variables['IS_TEST_DEPLOY'], 'true')))
     dependsOn: installValidate
     jobs:
-      - template: ../libs/stages/build.yml
+#      - template: ../libs/stages/build.yml
         parameters:
           buildType: Java
 
@@ -137,7 +137,7 @@ stages:
     displayName: Security
 #    condition: and(succeeded(), eq(variables['DEFAULT_OR_DEVOPS_BRANCH'], 'true'))
     jobs:
-      - template: ../libs/stages/security_java.yml
+#      - template: ../libs/stages/security_java.yml
         parameters:
           language: ${{parameters.language}} 
 #          version: ${{parameters.appVersion}} 
@@ -160,7 +160,7 @@ stages:
     jobs:
       - ${{ if or(in(variables['Build.SourceBranch'], parameters.dev_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.dev_branch, 'release-')))}}:
      # - ${{ if eq(variables['IS_DEV_BRANCH'], 'true') }}:
-        - template: ../libs/stages/deploy_java.yml
+#        - template: ../libs/stages/deploy_java.yml
           parameters:
             infraEnv: DEV004 
 #          appName: ${{parameters.appName}}  # may be not needed
@@ -168,7 +168,7 @@ stages:
             artifactID: ${{parameters.artifactID}}
 
       - ${{ else }}:
-        - template: ../libs/stages/skipBuild.yml
+#        - template: ../libs/stages/skipBuild.yml
         
       
     #  - ${{ if or(eq(parameters.language,'nodeMTA'), eq(parameters.language,'Java')) }}:
@@ -183,7 +183,7 @@ stages:
               infraEnv: DEV004  
 
       - ${{ if or(in(variables['Build.SourceBranch'], parameters.test_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.test_branch, 'release-')))}}:
-          - template: ../libs/azureTasks/ManualConfirmStage.yml
+#          - template: ../libs/azureTasks/ManualConfirmStage.yml
 
 
 
@@ -207,7 +207,7 @@ stages:
     #  - ${{ if in(variables['Build.SourceBranch'],  'refs/heads/ECP-3890') }}:
 
       - ${{ if or(in(variables['Build.SourceBranch'], parameters.test_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.test_branch, 'release-')))}}:
-        - template: ../libs/stages/deploy_java.yml
+#        - template: ../libs/stages/deploy_java.yml
           parameters:
             infraEnv: TEST004
             artifactID: ${{parameters.artifactID}}
@@ -215,7 +215,7 @@ stages:
             appLanguage: ${{parameters.language}}
 #        - template: ../libs/azureTasks/ManualConfirmStage.yml
       - ${{ else }}:
-          - template: ../libs/stages/skipBuild.yml
+#          - template: ../libs/stages/skipBuild.yml
           
 
 
@@ -226,13 +226,13 @@ stages:
     #              libCredGroup: 'Store Release CRED'
 
       - ${{ if or(eq(parameters.appName, 'aggregation-v2'),eq(parameters.appName, 'progress'),eq(parameters.appName, 'runtime')) }}:
-          - template: ../libs/CDS/CDSDeployDatabase.yml
+#          - template: ../libs/CDS/CDSDeployDatabase.yml
             parameters:
               appName: ${{ parameters.appName }} 
               infraEnv: 'TEST004'
 
       - ${{ if or(in(variables['Build.SourceBranch'], parameters.stage_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.stage_branch, 'release-')))}}:
-          - template: ../libs/azureTasks/ManualConfirmStage.yml
+#          - template: ../libs/azureTasks/ManualConfirmStage.yml
    
 
 
@@ -252,19 +252,19 @@ stages:
     jobs:
       - ${{ if or(in(variables['Build.SourceBranch'], parameters.stage_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.stage_branch, 'release-')))}}:
 
-        - template: ../libs/stages/deploy_java.yml
+#        - template: ../libs/stages/deploy_java.yml
           parameters:
             infraEnv: 'STAGE004' 
       #      DIRECT_STAGE_WITH_BUILD: ${{parameters.DIRECT_STAGE_WITH_BUILD}}
             artifactID: ${{parameters.artifactID}}
             appName: ${{parameters.appName}}
             appLanguage: ${{parameters.language}}
-        - template: ../libs/azureTasks/ManualConfirmStage.yml  #use one template ?
+#        - template: ../libs/azureTasks/ManualConfirmStage.yml  #use one template ?
       - ${{ else }}:
-        - template: ../libs/stages/skipBuild.yml
+#        - template: ../libs/stages/skipBuild.yml
           
       - ${{ if or(eq(parameters.appName, 'aggregation-v2'),eq(parameters.appName, 'progress'),eq(parameters.appName, 'runtime')) }}:
-          - template: ../libs/CDS/CDSDeployDatabase.yml
+#          - template: ../libs/CDS/CDSDeployDatabase.yml
             parameters:
               appName: ${{ parameters.appName }} 
               infraEnv: 'STAGE004'
@@ -275,7 +275,7 @@ stages:
     #            parameters:
     #              libCredGroup: 'Store Release CRED'
       - ${{ if or(in(variables['Build.SourceBranch'], parameters.prod_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.prod_branch, 'release-')))}}:
-         - template: ../libs/azureTasks/ManualConfirmProd.yml
+#         - template: ../libs/azureTasks/ManualConfirmProd.yml
   
 
   - stage: deployProdStage
@@ -291,19 +291,19 @@ stages:
 #    condition: eq(variables.IS_RELEASE_BRANCH, 'true')
     jobs:
       - ${{ if or(in(variables['Build.SourceBranch'], parameters.prod_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.prod_branch, 'release-')))}}:
-        - template: ../libs/stages/deploy_java.yml
+#        - template: ../libs/stages/deploy_java.yml
           parameters:
             infraEnv: 'DEV004' 
       #      DIRECT_STAGE_WITH_BUILD: ${{parameters.DIRECT_STAGE_WITH_BUILD}}
             artifactID: ${{parameters.artifactID}}
             appName: ${{parameters.appName}}
             appLanguage: ${{parameters.language}}
-        - template: ../libs/azureTasks/ManualConfirmProd.yml
+#        - template: ../libs/azureTasks/ManualConfirmProd.yml
       - ${{ else }}:
-        - template: ../libs/stages/skipBuild.yml
+#        - template: ../libs/stages/skipBuild.yml
           
       - ${{ if or(eq(parameters.appName, 'aggregation-v2'),eq(parameters.appName, 'progress'),eq(parameters.appName, 'runtime')) }}:
-          - template: ../libs/CDS/CDSDeployDatabase.yml
+#          - template: ../libs/CDS/CDSDeployDatabase.yml
             parameters:
               appName: ${{ parameters.appName }} 
               infraEnv: 'STAGE004'
