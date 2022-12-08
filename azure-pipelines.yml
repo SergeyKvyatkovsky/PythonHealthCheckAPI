@@ -35,7 +35,7 @@ parameters:
 #    default: env_config/$(LIB_ENV).mtaext
   - name: dev_branch
     type: string
-    default: refs/heads/*
+    default: \*
 
   - name: test_branch
     type: string
