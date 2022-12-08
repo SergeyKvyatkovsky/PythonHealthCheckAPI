@@ -68,13 +68,13 @@ stages:
         - bash: echo ${IS_DEV_BRANCH}
   - stage: MegaTest
     displayName: Megatest
-    condition: eq(variables['IS_DEV_BRANCH'], 'false')
+    condition: eq(variables['IS_DEV_BRANCH'], 'true')
     jobs:
       - job: 
         steps:
         - bash: echo "start"
-#        - ${{ if eq(variables['IS_DEV_BRANCH'], 'true') }}:
-#        - bash: echo "this is adaptum"
+        - ${{ if eq('${variables.IS_DEV_BRANCH}', 'true') }}:
+        - bash: echo "this is adaptum"
 #        - ${{ elseif eq(variables['IS_DEV_BRANCH'], 'dev') }}:
 #        - bash: echo "the value is not adaptum or contoso"  
 
