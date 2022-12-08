@@ -1,36 +1,309 @@
-# Python package
-# Create and test a Python package on multiple Python versions.
-# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+## https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json
+parameters:
+  - name: appName
+    type: string
+    default: javaApp
+  - name: appVersion
+    type: string
+    default: 0.0.1
+  - name: language
+    type: string
+    default: nodeMTA
+  - name: DIRECT_STAGE_WITH_BUILD
+    type: boolean
+    default: false
+  - name: deployTo
+    type: string
+    default: Dummy
+  - name: buildVersion
+    type: string
+    default: 0.1.0
+  - name: artifactID
+    type: string
+    default: dummy
+#  - name: apiEndpoint
+#    type: string
+#    default: https://api.cf.eu10.hana.ondemand.com
+  - name: releaseCredLIBGroup
+    type: string
+    default: Dummy
+#  - name: cfManifestVariablesFiles
+#    type: string
+#    default: env_config/$(LIB_ENV).mtaext
+#  - name: mtaExtensionDescriptor
+#    type: string
+#    default: env_config/$(LIB_ENV).mtaext
+  - name: dev_branch
+    type: string
+    default: refs/heads/ECP-3890
 
-trigger:
-- main
+  - name: test_branch
+    type: string
+    default: refs/heads/dev
 
-pool:
-  vmImage: ubuntu-latest
-strategy:
-  matrix:
-    Python27:
-      python.version: '2.7'
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
-    Python37:
-      python.version: '3.7'
+  - name: stage_branch
+    type: string
+    default: release-
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(python.version)'
-  displayName: 'Use Python $(python.version)'
+  - name: prod_branch
+    type: string
+    default: release-
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
 
-- script: |
-    pip install pytest pytest-azurepipelines
-    pytest
-  displayName: 'pytest'
+  
+
+variables:
+#  - name: IS_DEV_BRANCH
+#    value: $[in(variables['Build.SourceBranch'], '${{parameters.dev_branch}}'), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq('${{parameters.dev_branch}}', 'release-')), and(eq(variables['Build.Reason'], 'PullRequest'),eq('${{parameters.dev_branch}}', 'PR-')))]
+  - name: IS_TEST_BRANCH
+    value: $[or(in(variables['Build.SourceBranch'], '${{parameters.test_branch}}'),and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq('${{parameters.test_branch}}', 'release-')))]
+  - name: IS_STAGE_BRANCH
+    value: $[or(in(variables['Build.SourceBranch'], '${{parameters.stage_branch}}'),and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq('${{parameters.stage_branch}}', 'release-')))]
+
+
+
+#  - name: DEFAULT_OR_DEVOPS_BRANCH
+#    value: $[or(in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/main', 'refs/heads/ECP-3890'),startsWith(variables['Build.SourceBranch'], 'refs/heads/DEVOPS'))]
+  
+#  - name: IS_INDIVIDUALCI_DEPLOY
+#    value: $[eq(variables['Build.Reason'], 'IndividualCI')]
+
+#  - name: IS_SCHEDULED_DEPLOY
+#    value: $[eq(variables['Build.Reason'], 'Schedule')]
+  
+#  - name: IS_RELEASE_BRANCH
+#    value: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/release')]
+
+  - name: IS_PULL_REQUEST
+    value: $[eq(variables['Build.Reason'], 'PullRequest')]
+
+  # deployTO parameter will be set to 'not selected' with automated pipeline run
+#  - name: IS_DEV_MANUAL
+#    value: $[or(eq('${{parameters.deployTo}}', 'DEV'),eq('${{parameters.deployTo}}', 'DEV004'))]
+
+  # Manual deploy test environment provides chance to deploy STAGE and PROD Manual deploy TEST will triggers build, using same artifact deploy STAGE& PROD environment
+ # - name: IS_TEST_MANUAL 
+ #   value: $[or(eq('${{parameters.deployTo}}', 'TEST004'),eq('${{parameters.deployTo}}', 'TEST'))]
+
+ # - name: IS_RELEASE_DEPLOY_TEST
+ #   value: $[and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(variables['IS_TEST_MANUAL'], 'true'))]
+
+ # - name: IS_STAGE_MANUAL
+ #   value: $[or(eq('${{parameters.deployTo}}', 'STAGE'),eq('${{parameters.deployTo}}', 'STAGE004'))]
+
+ # - name: IS_PROD_MANUAL
+ #   value: $[or(eq('${{parameters.deployTo}}', 'PROD'),eq('${{parameters.deployTo}}', 'PROD004'))]
+
+ # - name: IS_BUILD_CRIT
+ #   value: $[ or(eq(variables['IS_INDIVIDUALCI_DEPLOY'], 'true'), eq(variables['IS_DEV_MANUAL'], 'true'), eq(variables['IS_RELEASE_DEPLOY_TEST'], 'true')) ]
+
+ # - name: SKIP_BUILD
+ #   value: $[or(and(eq(variables['Build.Reason'], 'Schedule'),eq('${{ parameters.deployTo }}', 'TEST004')),eq('${{ parameters.deployTo }}', 'STAGE004'),eq('${{ parameters.deployTo }}', 'PROD004'))]
+  
+ # - ${{ if in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/main', 'refs/heads/DEVOPS-ECP-3119') }}:
+ #     - group: SAP_LEARNING_DEV_TEST_jAVA_TEMPLATE
+ #     - name: DISPLAY_DEPLOY_ENV
+ #       value: DEV Environment
+ # - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/test') }}:
+ #     - group: SAP_LEARNING_TEST_JAVA_TEMPLATE
+ #     - name: DISPLAY_DEPLOY_ENV
+ #       value: TEST Environment
+
+
+
+stages: 
+  - stage: installValidate
+    displayName: Install & Validate
+    jobs:
+      - template: ../libs/stages/init.yml
+        parameters:
+          language: Java
+      - job:
+        steps:
+        - bash: echo ${IS_DEV_BRANCH}
+
+  - stage: buildStagingStage
+    displayName: Build & Staging
+ #   condition: false
+     # and(succeeded(), or(eq(variables['DEFAULT_OR_DEVOPS_BRANCH'], 'true'), eq(variables['IS_TEST_DEPLOY'], 'true')))
+    dependsOn: installValidate
+    jobs:
+      - template: ../libs/stages/build.yml
+        parameters:
+          buildType: Java
+
+  - stage: securityCodeCheck
+    dependsOn: buildStagingStage    #move sonar to build for covarege ?
+    displayName: Security
+#    condition: and(succeeded(), eq(variables['DEFAULT_OR_DEVOPS_BRANCH'], 'true'))
+    jobs:
+      - template: ../libs/stages/security_java.yml
+        parameters:
+          language: ${{parameters.language}} 
+#          version: ${{parameters.appVersion}} 
+# - stage: retainArtifactStage    
+#    displayName: Retain Artifact
+#    condition: and(or(eq(variables.IS_SCHEDULED_DEPLOY, 'true'), eq(variables.IS_TEST_MANUAL, 'true')), ne(variables.IS_RELEASE_DEPLOY_TEST, 'true'))
+#    dependsOn: installValidateStage
+#    jobs:
+#      - template: ../libs/stages/skipBuild.yml
+
+  - stage: deployDevStage
+    dependsOn: buildStagingStage
+    displayName: On DEV & Integration
+    variables:
+      - name: GO_TO_DEV  # what is it
+        value: $[or(eq('${{parameters.deployTo}}', 'DEV'),eq('${{parameters.deployTo}}', 'DEV004'))]
+      #  value: $[eq('${{parameters.deployTo}}', 'SANDBOX004')]
+    #  - group: ${{parameters.credLIBGroup}}
+    #condition: |
+    jobs:
+      - ${{ if or(in(variables['Build.SourceBranch'], parameters.dev_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.dev_branch, 'release-')))}}:
+     # - ${{ if eq(variables['IS_DEV_BRANCH'], 'true') }}:
+        - template: ../libs/stages/deploy_java.yml
+          parameters:
+            infraEnv: DEV004 
+#          appName: ${{parameters.appName}}  # may be not needed
+            appLanguage: ${{parameters.language}} 
+            artifactID: ${{parameters.artifactID}}
+
+      - ${{ else }}:
+        - template: ../libs/stages/skipBuild.yml
+        
+      
+    #  - ${{ if or(eq(parameters.language,'nodeMTA'), eq(parameters.language,'Java')) }}:
+    #      - template: ../libs/azureTasks/StoreArtifactCredsLIB.yml
+    #        parameters:
+    #          libCredGroup: "Store dev CRED"
+
+      - ${{ if or(eq(parameters.appName, 'aggregation-v2'),eq(parameters.appName, 'progress'),eq(parameters.appName, 'runtime')) }}:
+          - template: ../libs/CDS/CDSDeployDatabase.yml
+            parameters:
+              appName: ${{ parameters.appName }} 
+              infraEnv: DEV004  
+
+      - ${{ if or(in(variables['Build.SourceBranch'], parameters.test_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.test_branch, 'release-')))}}:
+          - template: ../libs/azureTasks/ManualConfirmStage.yml
+
+
+
+  - stage: deployTestStage
+    dependsOn: 
+     # - buildStagingStage
+      - deployDevStage
+ #     - retainArtifactStage
+    displayName: On TEST & Contracts
+    variables:
+      - name: GO_TO_TEST
+        value: $[or(eq('${{parameters.deployTo}}', 'TEST'),eq('${{parameters.deployTo}}', 'TEST004'))]
+    #  - ${{ if ne(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),true)}}:
+    #      - group: ${{parameters.credLIBGroup}}
+    #  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/release')}}:
+    #      - group: ${{parameters.releaseCredLIBGroup}}
+                                                                                                         # correct!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  #  condition: or(eq(variables.IS_SCHEDULED_DEPLOY, 'true'), eq(variables.IS_TEST_MANUAL, 'true'), eq(variables.IS_RELEASE_DEPLOY_TEST, 'true')) 
+
+    jobs:
+    #  - ${{ if in(variables['Build.SourceBranch'],  'refs/heads/ECP-3890') }}:
+
+      - ${{ if or(in(variables['Build.SourceBranch'], parameters.test_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.test_branch, 'release-')))}}:
+        - template: ../libs/stages/deploy_java.yml
+          parameters:
+            infraEnv: TEST004
+            artifactID: ${{parameters.artifactID}}
+            appName: ${{parameters.appName}}   #check if needed
+            appLanguage: ${{parameters.language}}
+#        - template: ../libs/azureTasks/ManualConfirmStage.yml
+      - ${{ else }}:
+          - template: ../libs/stages/skipBuild.yml
+          
+
+
+    #  - ${{ if and(eq(parameters.language,'nodeMTA'), eq(parameters.language,'Java')) }}:
+    #      - ${{ if and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.deployTo,'TEST004')) }}:
+    #          - template: ../libs/azureTasks/StoreArtifactCredsLIB.yml
+    #            parameters:
+    #              libCredGroup: 'Store Release CRED'
+
+      - ${{ if or(eq(parameters.appName, 'aggregation-v2'),eq(parameters.appName, 'progress'),eq(parameters.appName, 'runtime')) }}:
+          - template: ../libs/CDS/CDSDeployDatabase.yml
+            parameters:
+              appName: ${{ parameters.appName }} 
+              infraEnv: 'TEST004'
+
+      - ${{ if or(in(variables['Build.SourceBranch'], parameters.stage_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.stage_branch, 'release-')))}}:
+          - template: ../libs/azureTasks/ManualConfirmStage.yml
+   
+
+
+        
+
+  - stage: deployStageStage
+    dependsOn: deployTestStage
+    displayName: Stage & SAT
+    variables:
+      - name: GO_TO_STAGE
+        value: $[or(eq('${{parameters.deployTo}}', 'STAGE'),eq('${{parameters.deployTo}}', 'STAGE004'))]
+#      - ${{ if ne(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),true)}}:
+#          - group: ${{parameters.credLIBGroup}}
+#      - ${{ else }}:
+#          - group: ${{parameters.releaseCredLIBGroup}}
+#    condition: eq(variables.IS_RELEASE_BRANCH, 'true')
+    jobs:
+      - ${{ if or(in(variables['Build.SourceBranch'], parameters.stage_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.stage_branch, 'release-')))}}:
+
+        - template: ../libs/stages/deploy_java.yml
+          parameters:
+            infraEnv: 'STAGE004' 
+      #      DIRECT_STAGE_WITH_BUILD: ${{parameters.DIRECT_STAGE_WITH_BUILD}}
+            artifactID: ${{parameters.artifactID}}
+            appName: ${{parameters.appName}}
+            appLanguage: ${{parameters.language}}
+        - template: ../libs/azureTasks/ManualConfirmStage.yml  #use one template ?
+      - ${{ else }}:
+        - template: ../libs/stages/skipBuild.yml
+          
+      - ${{ if or(eq(parameters.appName, 'aggregation-v2'),eq(parameters.appName, 'progress'),eq(parameters.appName, 'runtime')) }}:
+          - template: ../libs/CDS/CDSDeployDatabase.yml
+            parameters:
+              appName: ${{ parameters.appName }} 
+              infraEnv: 'STAGE004'
+              
+    #  - ${{ if and(eq(parameters.language,'nodeMTA'), eq(parameters.language,'Java')) }}:
+    #      - ${{ if and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.deployTo,'STAGE004'),contains(parameters.DIRECT_STAGE_WITH_BUILD, true)) }}:
+    #          - template: ../libs/azureTasks/StoreArtifactCredsLIB.yml
+    #            parameters:
+    #              libCredGroup: 'Store Release CRED'
+      - ${{ if or(in(variables['Build.SourceBranch'], parameters.prod_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.prod_branch, 'release-')))}}:
+         - template: ../libs/azureTasks/ManualConfirmProd.yml
+  
+
+  - stage: deployProdStage
+    dependsOn: deployStageStage
+    displayName: Prod & Release
+    variables:
+      - name: GO_TO_PROD
+        value: $[or(eq('${{parameters.deployTo}}', 'PROD'),eq('${{parameters.deployTo}}', 'PROD004'))]
+#      - ${{ if ne(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),true)}}:
+#          - group: ${{parameters.credLIBGroup}}
+#      - ${{ else }}:
+#          - group: ${{parameters.releaseCredLIBGroup}}
+#    condition: eq(variables.IS_RELEASE_BRANCH, 'true')
+    jobs:
+      - ${{ if or(in(variables['Build.SourceBranch'], parameters.prod_branch), and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq(parameters.prod_branch, 'release-')))}}:
+        - template: ../libs/stages/deploy_java.yml
+          parameters:
+            infraEnv: 'DEV004' 
+      #      DIRECT_STAGE_WITH_BUILD: ${{parameters.DIRECT_STAGE_WITH_BUILD}}
+            artifactID: ${{parameters.artifactID}}
+            appName: ${{parameters.appName}}
+            appLanguage: ${{parameters.language}}
+        - template: ../libs/azureTasks/ManualConfirmProd.yml
+      - ${{ else }}:
+        - template: ../libs/stages/skipBuild.yml
+          
+      - ${{ if or(eq(parameters.appName, 'aggregation-v2'),eq(parameters.appName, 'progress'),eq(parameters.appName, 'runtime')) }}:
+          - template: ../libs/CDS/CDSDeployDatabase.yml
+            parameters:
+              appName: ${{ parameters.appName }} 
+              infraEnv: 'STAGE004'
