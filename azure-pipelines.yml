@@ -86,6 +86,8 @@ stages:
     jobs:
       - job: 
         steps:
+          - ${{ if eq(parameters.stage_branch, true) }}:
+          - bash: echo 2112121212
           - script: 
             env:
               ${{ if eq(parameters.stage_branch, true) }}:
