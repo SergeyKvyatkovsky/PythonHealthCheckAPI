@@ -127,8 +127,8 @@ stages:
     dependsOn: installValidate
     jobs:
 #      - template: ../libs/stages/build.yml
-        parameters:
-          buildType: Java
+#        parameters:
+#          buildType: Java
 
   - stage: securityCodeCheck
     dependsOn: buildStagingStage    #move sonar to build for covarege ?
