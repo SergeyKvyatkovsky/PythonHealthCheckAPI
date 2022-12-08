@@ -73,8 +73,8 @@ stages:
       - job: 
         steps:
         - bash: echo "start"
-        - ${{ if eq(variables['IS_DEV_BRANCH'], 'true') }}:
-        - bash: echo "this is adaptum"
-        - ${{ elseif eq(variables['IS_DEV_BRANCH'], 'dev') }}:
-        - bash: echo "the value is not adaptum or contoso"  
+#        - ${{ if eq(variables['IS_DEV_BRANCH'], 'true') }}:
+#        - bash: echo "this is adaptum"
+#        - ${{ elseif eq(variables['IS_DEV_BRANCH'], 'dev') }}:
+#        - bash: echo "the value is not adaptum or contoso"  
 
