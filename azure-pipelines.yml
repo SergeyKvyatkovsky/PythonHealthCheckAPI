@@ -124,7 +124,7 @@ stages:
 
   - stage: buildStagingStage
     displayName: Build & Staging
- #   condition: false
+    condition: false
      # and(succeeded(), or(eq(variables['DEFAULT_OR_DEVOPS_BRANCH'], 'true'), eq(variables['IS_TEST_DEPLOY'], 'true')))
     dependsOn: installValidate
     jobs:
