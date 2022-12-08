@@ -44,7 +44,6 @@ parameters:
   - name: stage_branch
     type: string
     default: release-
-    value: contoso # triggers elseif condition
 
   - name: prod_branch
     type: string
@@ -126,8 +125,8 @@ stages:
       - job: 
         steps:
         - script: echo "start"
-        - ${{ if eq('${{parametrs.artifactID}}', 'true') }}:
+        - ${{ if eq('${{variables.IS_DEV_BRANCH}}', 'true') }}:
         - script: echo "this is adaptum"
-        - ${{ elseif eq('${{parametrs.artifactID}}', 'dev') }}:
+        - ${{ elseif eq('${{variables.IS_DEV_BRANCH}}', 'dev') }}:
         - script: echo "the value is not adaptum or contoso"  
 
