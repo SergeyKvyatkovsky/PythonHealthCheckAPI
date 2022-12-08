@@ -71,10 +71,10 @@ stages:
     condition: eq(variables['IS_DEV_BRANCH'], 'true')
     jobs:
       - job: condition_test
-        condition: contains(variables['IS_DEV_BRANCH'], 'true')
+        condition: contains(variables['IS_DEV_BRANCH'], 'false')
         steps:
         - bash: echo "start"
-          condition: eq(variables.IS_DEV_BRANCH, 'true')
+          condition: eq(variables.IS_DEV_BRANCH, 'false')
         - bash: echo "condition works"
 #        - ${{ if eq('${variables.IS_DEV_BRANCH}', 'true') }}:
 #        - bash: echo "this is adaptum"
