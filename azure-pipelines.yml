@@ -127,8 +127,6 @@ stages:
         - script: echo "start"
         - ${{ if eq('${{parametrs.artifactID}}', 'true') }}:
         - script: echo "this is adaptum"
-        - ${{ elseif eq('${{parametrs.artifactID}}', 'dev') }}: # true
-        - script: echo "this is contoso" 
-        - ${{ else }}:
+        - ${{ elseif eq('${{parametrs.artifactID}}', 'dev') }}:
         - script: echo "the value is not adaptum or contoso"  
 
