@@ -74,7 +74,7 @@ stages:
         condition: contains(variables['IS_DEV_BRANCH'], 'true')
         steps:
         - bash: echo "start"
-        - ${{ if eq(parameters.stage_branch, 'release-') }}:
+        - ${{ if eq(variables.IS_DEV_BRANCH, 'true') }}:
         #  condition: eq(variables.IS_DEV_BRANCH, 'true')
         - bash: echo "condition works"
 #        - ${{ if eq('${variables.IS_DEV_BRANCH}', 'true') }}:
