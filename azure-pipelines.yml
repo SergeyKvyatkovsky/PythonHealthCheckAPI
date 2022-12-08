@@ -125,9 +125,9 @@ stages:
       - job: 
         steps:
         - script: echo "start"
-        - ${{ if eq(variables.foo, 'adaptum') }}:
+        - ${{ if eq(${IS_DEV_BRANCH}, 'main') }}:
         - script: echo "this is adaptum"
-        - ${{ elseif eq(variables.foo, 'contoso') }}: # true
+        - ${{ elseif eq(${IS_DEV_BRANCH}, 'dev') }}: # true
         - script: echo "this is contoso" 
         - ${{ else }}:
         - script: echo "the value is not adaptum or contoso"  
