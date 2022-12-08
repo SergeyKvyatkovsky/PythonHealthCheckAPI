@@ -44,6 +44,7 @@ parameters:
   - name: stage_branch
     type: string
     default: release-
+    value: contoso # triggers elseif condition
 
   - name: prod_branch
     type: string
