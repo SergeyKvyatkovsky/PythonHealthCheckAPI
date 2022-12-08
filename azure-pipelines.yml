@@ -68,7 +68,7 @@ stages:
         - bash: echo ${IS_DEV_BRANCH}
   - stage: MegaTest
     displayName: Megatest
-    condition: eq(variables['IS_DEV_BRANCH'], 'true')
+    condition: eq(variables['IS_DEV_BRANCH'], 'false')
     jobs:
       - job: 
         steps:
