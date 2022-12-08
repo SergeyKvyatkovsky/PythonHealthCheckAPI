@@ -74,11 +74,21 @@ stages:
         condition: contains(variables['IS_DEV_BRANCH'], 'true')
         steps:
         - bash: echo "start"
-        - ${{ if eq('true', 'true') }}:
-        #  condition: eq(variables.IS_DEV_BRANCH, 'true')
+        #- ${{ if eq('true', 'true') }}:
+          condition: eq(variables.IS_DEV_BRANCH, 'true')
         - bash: echo "condition works"
 #        - ${{ if eq('${variables.IS_DEV_BRANCH}', 'true') }}:
 #        - bash: echo "this is adaptum"
 #        - ${{ elseif eq(variables['IS_DEV_BRANCH'], 'dev') }}:
 #        - bash: echo "the value is not adaptum or contoso"  
+  - stage:
+    displayName: 1111111
+    jobs:
+      - job: 
+        steps:
+          - script: 
+            env:
+              ${{ if eq(parameters.stage_branch, true) }}:
+              TOOL_DEBUG: true
+              TOOL_DEBUG_DIR: _dbg
 
