@@ -90,10 +90,12 @@ stages:
 #          - task: msbuild@1
 #          - task: vstest@2
           - bash: echo 2112121212
-            ${{ if eq(parameters.stage_branch, true) }}:
+            ${{ if eq(variables.IS_DEV_BRANCH, true) }}:
+            displayName: wwddwdwdwdwdwdwd
+
           - script: 
             env:
-              ${{ if eq(parameters.stage_branch, true) }}:
+              ${{ if eq(variables.IS_DEV_BRANCH, true) }}:
               TOOL_DEBUG: true
               TOOL_DEBUG_DIR: _dbg
 
