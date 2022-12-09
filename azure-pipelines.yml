@@ -106,7 +106,7 @@ stages:
     displayName: ifElse
     jobs:
       - job:
-        - ${{ if eq( parameters['environment'], 'develop') }}:
+        - ${{ if eq( parameters['stage_branch'], 'develop') }}:
         - task: Bash@1
           displayName: task1
           inputs:
