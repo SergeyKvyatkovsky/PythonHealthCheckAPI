@@ -102,7 +102,29 @@ stages:
               ${{ if eq(parameters.stage_branch, true) }}:
               TOOL_DEBUG: true
               TOOL_DEBUG_DIR: _dbg
-#        ${{ else }}:
-#        displayName: Else
+  - stage:
+    displayName: ifElse
+    jobs:
+      - job:
+        - ${{ if eq( parameters['environment'], 'develop') }}:
+        - task: Bash@1
+          displayName: task1
+          inputs:
+            targetType: inline
+            script: | 
+                echo "task1 is used as environment was selected"
 
-
+        - ${{ elseif eq( parameters['stage_branch'], 'preproduction') }}:
+        - task: Bash@2
+          displayName: task2
+          inputs:
+            targetType: inline
+            script: |
+              echo "task2 is used as environment: ${{parameters.stage_branch}} was selected"
+        - ${{ else }}:
+        - task: Bash@3
+          displayName: task3
+          inputs:
+            targetType: inline
+            script: |
+              echo "task3 is used as environment: ${{parameters.stage_branch}} was selected"
