@@ -113,8 +113,8 @@ stages:
     - ${{ elseif eq( parameters['stage_branch'], 'release') }}:
         - job:  
           steps:
-            - bash: InELSEIF
+            - bash: echo InELSEIF
     - ${{ else }}:
         - job: 
           steps:
-            - bash: INELSE
+            - bash: echo INELSE
