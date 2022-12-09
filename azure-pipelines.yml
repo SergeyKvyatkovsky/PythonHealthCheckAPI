@@ -43,8 +43,6 @@ parameters:
   - name: stage_branch
     type: string
     default: release-
-    values:
-      - 'release'
 
   - name: prod_branch
     type: string
@@ -108,7 +106,7 @@ stages:
   - stage:
     displayName: ifElse
     jobs:
-    - ${{ if eq( variables['stage_branch'], 'release-') }}:
+    - ${{ if eq( parameters['stage_branch'], 'release-') }}:
         - job: 
           steps:
             - bash: echo InIF
