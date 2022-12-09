@@ -85,7 +85,7 @@ stages:
     displayName: 1111111
     ${{ if eq(parameters.stage_branch, true) }}:
     jobs:
-      ${{ if eq(parameters.stage_branch, true) }}:
+    ${{ if eq(parameters.stage_branch, true) }}:
       - job: 
         steps:
 #          - ${{ if eq(variables.IS_DEV_BRANCH, 'true')}}:
