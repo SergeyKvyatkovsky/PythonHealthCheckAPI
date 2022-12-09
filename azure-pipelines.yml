@@ -106,11 +106,11 @@ stages:
   - stage:
     displayName: ifElse
     jobs:
-    - ${{ if eq( parameters['stage_branch'], 'release-') }}:
+    - ${{ if eq( variables['IS_DEV_BRANCH'], 'true') }}:
         - job: 
           steps:
             - bash: echo InIF
-    - ${{ elseif eq( parameters['stage_branch'], 'release') }}:
+    - ${{ elseif eq( variables['IS_DEV_BRANCH'], 'false') }}:
         - job:  
           steps:
             - bash: echo InELSEIF
