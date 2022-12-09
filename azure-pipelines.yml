@@ -110,10 +110,10 @@ stages:
         - job: 
           steps:
             - bash: echo InIF
-    - ${{ elseif eq( variables['IS_DEV_BRANCH'], 'true') }}:
-        - job:  
-          steps:
-            - bash: echo InELSEIF
+#    - ${{ elseif eq( variables['IS_DEV_BRANCH'], 'true') }}:
+#        - job:  
+#          steps:
+#            - bash: echo InELSEIF
     - ${{ else }}:
         - job: 
           steps:
