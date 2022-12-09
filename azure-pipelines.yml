@@ -43,6 +43,8 @@ parameters:
   - name: stage_branch
     type: string
     default: release-
+    values:
+      - release
 
   - name: prod_branch
     type: string
