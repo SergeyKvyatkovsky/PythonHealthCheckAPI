@@ -84,19 +84,31 @@ stages:
   - stage:
     displayName: 1111111
     ${{ if eq(parameters.stage_branch, true) }}:
-    jobs:
-    
+    jobs:    
       - job: 
-        ${{ if eq(parameters.stage_branch, true) }}:
+        ${{ if eq(parameters.stage_branch, true) }}: If
         steps:
 #          - ${{ if eq(variables.IS_DEV_BRANCH, 'true')}}:
 #          - task: msbuild@1
 #          - task: vstest@2
           - bash: echo 2112121212
             ${{ if eq(parameters.stage_branch, true) }}:
+          - bash: echo afterIf 
+            ${{ else }}:
+          - bash: echo afterElse 
+
           - script: 
             env:
               ${{ if eq(parameters.stage_branch, true) }}:
               TOOL_DEBUG: true
               TOOL_DEBUG_DIR: _dbg
+        ${{ else }}:
+        displayName: Else
+#    condition: 
+#    dependsOn:
+#      jobs:  
+#          - job: 
+#          ${{ if eq(parameters.stage_branch, true) }}:
+#            steps:
+#                - bash: echo 2112121212
 
