@@ -94,8 +94,8 @@ stages:
           - bash: echo 2112121212
             ${{ if eq(parameters.stage_branch, true) }}:
           - bash: echo afterIf 
-            ${{ else }}:
-          -  bash: echo afterElse 
+#            ${{ else }}:
+#          -  bash: echo afterElse 
 
           - script: 
             env:
