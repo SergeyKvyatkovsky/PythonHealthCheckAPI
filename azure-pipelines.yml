@@ -90,7 +90,7 @@ stages:
 #          - task: msbuild@1
 #          - task: vstest@2
           - bash: echo 2112121212
-              ${{ if eq(parameters.stage_branch, true) }}:
+            ${{ if eq(parameters.stage_branch, true) }}:
           - script: 
             env:
               ${{ if eq(parameters.stage_branch, true) }}:
