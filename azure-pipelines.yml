@@ -53,8 +53,8 @@ variables:
     value: true
 #  - name: IS_TEST_BRANCH
 #    value: $[or(in(variables['Build.SourceBranch'], '${{parameters.test_branch}}'),and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq('${{parameters.test_branch}}', 'release-')))]
-#  - name: IS_STAGE_BRANCH
-#    value: $[or(in(variables['Build.SourceBranch'], '${{parameters.stage_branch}}'),and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq('${{parameters.stage_branch}}', 'release-')))]
+  - name: IS_STAGE_BRANCH
+    value: $[or(in(variables['Build.SourceBranch'], '${{parameters.stage_branch}}'),and(startsWith(variables['Build.SourceBranch'], 'refs/heads/release'),eq('${{parameters.stage_branch}}', 'release-')))]
 
   - name: IS_PULL_REQUEST
     value: $[eq(variables['Build.Reason'], 'PullRequest')]
@@ -106,7 +106,7 @@ stages:
     displayName: ifElse
     jobs:
       - job:
-        - ${{ if eq( parameters['stage_branch'], 'develop') }}:
+        - ${{ if eq( variables['IS_DEV_BRANCH'], 'develop') }}:
         - task: Bash@1
           displayName: task1
           inputs:
