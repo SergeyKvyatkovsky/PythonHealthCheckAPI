@@ -44,7 +44,7 @@ parameters:
     type: string
     default: release-
     values:
-      - "release"
+      - 'release'
 
   - name: prod_branch
     type: string
